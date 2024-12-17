@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "ChatClient.h"
+//#include "chatclient.h"
 #include <QApplication>
 #include <QLocale>
 #include <QTranslator>
@@ -17,7 +17,9 @@ int main(int argc, char *argv[])
             break;
         }
     }
-    ChatClient w;
+//    ChatClient w;
+//    w.show();
+    MainWindow w;
     w.show();
     return a.exec();
 }

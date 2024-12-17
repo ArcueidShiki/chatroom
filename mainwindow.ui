@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>517</height>
+    <width>807</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -195,8 +195,8 @@ color: rgb(11, 11, 11);</string>
    <widget class="QLabel" name="label_filename">
     <property name="geometry">
      <rect>
-      <x>580</x>
-      <y>0</y>
+      <x>590</x>
+      <y>10</y>
       <width>81</width>
       <height>20</height>
      </rect>
@@ -209,7 +209,7 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>430</y>
+      <y>440</y>
       <width>201</width>
       <height>24</height>
      </rect>
@@ -226,7 +226,7 @@ border-radius: 3px;</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>340</y>
+      <y>370</y>
       <width>161</width>
       <height>24</height>
      </rect>
@@ -250,7 +250,7 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>630</x>
-      <y>380</y>
+      <y>400</y>
       <width>161</width>
       <height>24</height>
      </rect>
@@ -274,7 +274,7 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>380</y>
+      <y>400</y>
       <width>31</width>
       <height>21</height>
      </rect>
@@ -287,7 +287,7 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>340</y>
+      <y>370</y>
       <width>21</width>
       <height>21</height>
      </rect>
@@ -335,8 +335,62 @@ color: rgb(11, 11, 11);</string>
      <enum>Qt::Vertical</enum>
     </property>
    </widget>
+   <widget class="QLabel" name="label_upload_4">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>340</y>
+      <width>31</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>User:</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit_user">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>340</y>
+      <width>161</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-radius: 5px;
+color: rgb(0, 0, 0);
+border: 1.5px solid;
+border-color: rgba(0,0, 150, 0.7);
+background-color: rgba(255,255,255,1);
+color: rgb(11, 11, 11);</string>
+    </property>
+    <property name="text">
+     <string>老王</string>
+    </property>
+    <property name="clearButtonEnabled">
+     <bool>true</bool>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>lineEdit_inputbox</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btn_send</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>290</x>
+     <y>425</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>529</x>
+     <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

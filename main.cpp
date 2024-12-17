@@ -17,8 +17,6 @@ int main(int argc, char *argv[])
             break;
         }
     }
-//    ChatClient w;
-//    w.show();
     MainWindow w;
     w.show();
     return a.exec();

@@ -53,7 +53,7 @@ private slots:
     void updateProgressBar(int progress);
     void updateSpeed(QString speed);
 
-    void onTransferComplete(QString filename);
+    void onTransferComplete();
     void onTransferFailed(const QString &errorMsg);
 
     void getUserList();
@@ -76,6 +76,7 @@ private:
     QPushButton *uploadBtn;
     QPushButton *cancelBtn;
     QLabel *filenameLb;
+    QLabel *filesizeLb;
     QLabel *speedLb;
     QProgressBar *progressBar;
     QTableWidget *tableList;
@@ -87,5 +88,6 @@ private:
     QString username;
     bool isUpload;
     QElapsedTimer *timer;
+    size_t downloadFileSize;
 };
 #endif // MAINWINDOW_H

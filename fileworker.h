@@ -10,12 +10,12 @@ class FileWorker : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileWorker(QString &ip, quint16 port, const QString &filePath, bool isUpload);
+    explicit FileWorker(QString &ip, quint16 port, const QString &filePath, bool isUpload, size_t filesize = 0);
     ~FileWorker();
 signals:
     void progressUpdated(int value);
     void speedUpdated(QString speed);
-    void transferComplete(QString filename);
+    void transferComplete();
     void transferFailed(const QString &errorMsg);
 public slots:
     void startTransfer();
@@ -33,6 +33,7 @@ private:
     QString filePath;
     QFile *file;
     QElapsedTimer *timer;
+    size_t filesize;
     void speedStr(qint64 bytes, double time, QString &str);
 };
 

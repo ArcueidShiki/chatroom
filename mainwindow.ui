@@ -159,7 +159,7 @@ color: rgb(11, 11, 11);</string>
      <rect>
       <x>590</x>
       <y>70</y>
-      <width>201</width>
+      <width>91</width>
       <height>31</height>
      </rect>
     </property>
@@ -399,6 +399,19 @@ color: red;</string>
     </property>
     <property name="text">
      <string>取消</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_filesize">
+    <property name="geometry">
+     <rect>
+      <x>700</x>
+      <y>70</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
     </property>
    </widget>
   </widget>

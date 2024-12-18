@@ -2,8 +2,6 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <thread>
-// Create Worker, Move it to worker thread
-// use signal slots to update main thread UI
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     uploadBtn = ui->btn_upload;
     cancelBtn = ui->btn_cancel;
     filenameLb = ui->label_filename;
+    filesizeLb = ui->label_filesize;
     speedLb = ui->label_speed;
     progressBar = ui->progressBar;
     tableList = ui->table_userlist;
@@ -29,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     statusBar()->showMessage("Not connected to server");
     sendBtn->setDisabled(true);
     progressBar->setVisible(false);
+    workerThread = nullptr;
 }
 
 MainWindow::~MainWindow()
@@ -102,6 +102,8 @@ void MainWindow::receiveMsg()
     if (msg.startsWith("FILE"))
     {
         filenameLb->setText(msg.split(" ")[1]);
+        filesizeLb->setText(msg.split(" ")[2]);
+        downloadFileSize = filesizeLb->text().toULong();
         downloadBtn->setEnabled(true);
     }
     else if (msg.startsWith("USERLIST"))
@@ -111,7 +113,7 @@ void MainWindow::receiveMsg()
         qDebug() << ipUserStr;
         tableList->clear();
         tableList->setColumnCount(2);
-        tableList->setRowCount(list.size() + 1);
+        tableList->setRowCount(list.size());
         tableList->setItem(0,0, new QTableWidgetItem("用户"));
         tableList->setItem(0,1, new QTableWidgetItem("IP"));
         for (int i = 0; i < list.size() - 1; i++)
@@ -125,7 +127,6 @@ void MainWindow::receiveMsg()
     }
     else
     {
-        // normal msg
         chathistory->append(msg);
     }
 }
@@ -135,9 +136,6 @@ void MainWindow::onConnected()
     statusBar()->showMessage("连接成功");
     QString greeting = username + u8" 进入了群聊";
     client_sock->write(greeting.toUtf8());
-    // Save Username on Server
-//    QString sendName = "USER " + username;
-//    client_sock->write(sendName.toUtf8());
 }
 
 void MainWindow::onDisconnected()
@@ -165,16 +163,16 @@ void MainWindow::upload()
     if (filePath.isEmpty()) return;
     QFileInfo file(filePath);
     filenameLb->setText(file.fileName());
+
     cancelBtn->setEnabled(true);
     progressBar->setVisible(true);
     progressBar->setValue(0);
     progressBar->setTextVisible(true);
-    cancelBtn->setEnabled(true);
+
 
     workerThread = new QThread(this);
     fileworker = new FileWorker(ip, port, filePath, true);
     fileworker->moveToThread(workerThread);
-
     connect(workerThread, &QThread::started, fileworker, &FileWorker::startTransfer);
     connect(fileworker, &FileWorker::progressUpdated, this, &MainWindow::updateProgressBar);
     connect(fileworker, &FileWorker::speedUpdated, this, &MainWindow::updateSpeed);
@@ -182,10 +180,6 @@ void MainWindow::upload()
     connect(fileworker, &FileWorker::transferComplete, this, &MainWindow::onTransferComplete);
     connect(fileworker, &FileWorker::transferFailed, this, &MainWindow::onTransferFailed);
 
-    // deleteLater
-//    connect(thread, &QThread::started, this, &MainWindow::uploadWorker);
-//    connect(this, &MainWindow::transferFinished, thread, &QThread::quit);
-//    connect(thread, &QThread::finished, thread, &QObject::deleteLater);
     workerThread->start();
 }
 
@@ -208,20 +202,30 @@ void MainWindow::cancel()
 
 void MainWindow::download()
 {
-    QString filePath = QFileDialog::getSaveFileName(this, "Save Downloaded File");
-    if (filePath.isEmpty()) return;
-    QString fileName = QFileInfo(filePath).fileName();
-    QString header = QString("DOWNLOAD %1\n").arg(fileName);
+    QString filename = filenameLb->text().trimmed();
+    if (filename.isEmpty())
+    {
+        QMessageBox::critical(this, "Error", "No file ready to download");
+        return;
+    }
 
-//    workerThread = new QThread(this);
-//    // there have problems with memory leak, upload and download clicked at same time.
-//    fileWorker = new FileWorker(ip, port, filePath, false);
-//    connect(workerThread, &QThread::started, fileWorker, &FileWorker::startTransfer);
+    cancelBtn->setEnabled(true);
+    progressBar->setVisible(true);
+    progressBar->setValue(0);
+    progressBar->setTextVisible(true);
 
-//    connect(fileWorker, &FileWorker::transferComplete, this, &MainWindow::onTransferComplete);
-//    connect(fileWorker, &FileWorker::transferFailed, this, &MainWindow::onTransferFailed);
-//    workerThread->start();
-    //    cancelFile->setEnabled(true);
+    workerThread = new QThread();
+    fileworker = new FileWorker(ip, port, filename, false, downloadFileSize);
+    fileworker->moveToThread(workerThread);
+
+    connect(workerThread, &QThread::started, fileworker, &FileWorker::startTransfer);
+    connect(fileworker, &FileWorker::progressUpdated, this, &MainWindow::updateProgressBar);
+    connect(fileworker, &FileWorker::speedUpdated, this, &MainWindow::updateSpeed);
+    connect(this, &MainWindow::cancelTransfer, fileworker, &FileWorker::cancelTransfer);
+    connect(fileworker, &FileWorker::transferComplete, this, &MainWindow::onTransferComplete);
+    connect(fileworker, &FileWorker::transferFailed, this, &MainWindow::onTransferFailed);
+
+    workerThread->start();
 }
 
 void MainWindow::updateProgressBar(int progress)
@@ -234,7 +238,7 @@ void MainWindow::updateSpeed(QString speed)
     speedLb->setText(speed);
 }
 
-void MainWindow::onTransferComplete(QString filename)
+void MainWindow::onTransferComplete()
 {
     QMessageBox::information(this, "Transfer Complete", "File transfer completed successful.");
     workerThread->quit();

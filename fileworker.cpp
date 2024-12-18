@@ -121,12 +121,12 @@ void FileWorker::upload()
             qint64 bytesWritten = socket->write(chunk);
             if (!socket->waitForBytesWritten(10000))
             {
-                qDebug() << "Timeout";
+                emit transferFailed("Wait For bytes Written Timeout");
                 return;
             }
             if (bytesWritten == -1)
             {
-                qDebug() << "Write Error:" << socket->errorString();
+                emit transferFailed("Write Error:" + socket->errorString());
                 return;
             }
             bytesToWrite -= bytesWritten;
@@ -140,7 +140,7 @@ void FileWorker::upload()
         emit speedUpdated(speed);
         int progress = static_cast<int>((bytesSent * 100) / total);
         emit progressUpdated(progress);
-        qDebug() << "Progress: " << progress << "DEBUG 5 Speed: " << speed;
+//        qDebug() << "Progress: " << progress << "DEBUG 5 Speed: " << speed;
     }
     socket->close();
     file.close();
@@ -161,24 +161,28 @@ void FileWorker::download()
         delete socket;
         return;
     }
-    QString header = QString("DOWNLOAD %1\n").arg(filePath);
-
+    QString header = QString("DOWNLOAD %1").arg(filePath);
+    qDebug() << header;
     file = new QFile(filePath);
     if (!file->open(QIODevice::WriteOnly))
     {
+        qDebug() << "DEBUGXXX";
         emit transferFailed("Failed to open file for download");
         return;
     }
 
     qint64 bytesReceived = 0;
     socket->write(header.toUtf8());
+    qDebug() << header;
     timer = new QElapsedTimer();
     timer->start();
-    while (socket->waitForReadyRead())
+    while(bytesReceived < filesize && socket->state() == QAbstractSocket::ConnectedState)
     {
-        QByteArray data = socket->readAll();
-        file->write(data);
-        bytesReceived += data.size();
+
+        QByteArray chunk = socket->read(1024 * 4096 * 200);
+        socket->waitForReadyRead(100000);
+        file->write(chunk);
+        bytesReceived += chunk.size();
         double seconds = timer->elapsed() / 1000;
         QString speed;
         speedStr(bytesReceived, seconds, speed);
@@ -186,11 +190,8 @@ void FileWorker::download()
         emit speedUpdated(speed);
         emit progressUpdated(progress);
     }
+    socket->close();
     file->close();
-    delete file;
-    file = nullptr;
-    socket->disconnectFromHost();
-    delete socket;
     emit transferComplete();
 }
 

@@ -101,8 +101,8 @@ void MainWindow::receiveMsg()
     QString msg = QString::fromUtf8(data);
     if (msg.startsWith("FILE"))
     {
-        filenameLb->setText(msg.split(" ")[1]);
-        filesizeLb->setText(msg.split(" ")[2]);
+        filenameLb->setText(msg.split(" ")[1].trimmed());
+        filesizeLb->setText(msg.split(" ")[2].trimmed());
         downloadFileSize = filesizeLb->text().toULong();
         downloadBtn->setEnabled(true);
     }
@@ -195,6 +195,7 @@ void MainWindow::cancel()
         file->deleteLater();
         file = nullptr;
     }
+    if (workerThread) workerThread->quit();
     progressBar->setValue(0);
     cancelBtn->setEnabled(false);
     QMessageBox::information(this, "Transfer", "Transfer canceled");

@@ -13,6 +13,13 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QCloseEvent>
+#include <QFileDialog>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QTimer>
+#include <QElapsedTimer>
+#include <QThread>
+//#include "fileworker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,13 +43,25 @@ private slots:
     void onConnected();
     void onDisconnected();
     void onError(QAbstractSocket::SocketError sockErr);
-//    void uploadFile();
     void on_btn_close_clicked();
+
+    void upload();
+    void download();
+    void cancelTransfer();
+//    void updateProgressBar(qint64 bytes, qint64 total);
+
+    void onTransferComplete();
+    void onTransferFailed(const QString &errorMsg);
+
+
+    void getUserList();
+
 protected:
     void closeEvent(QCloseEvent *event) override;
 private:
     Ui::MainWindow *ui;
     QTcpSocket *client_sock;
+    QTcpSocket *file_sock;
     QTextEdit *chathistory;
     QLineEdit *input;
     QLineEdit *ipedit;
@@ -51,14 +70,20 @@ private:
     QPushButton *connectBtn;
     QPushButton *sendBtn;
     QPushButton *closeBtn;
-    QLabel *acceptFile;
-    QLabel *uploadFile;
-    QLabel *cancelFile;
+    QPushButton *acceptFile;
+    QPushButton *uploadFile;
+    QPushButton *cancelFile;
     QLabel *filename;
+    QLabel *speedLb;
     QProgressBar *progressBar;
     QTableWidget *tableList;
+    QFile *file = nullptr;
+    QThread *workerThread;
+//    FileWorker *fileWorker;
     QString ip;
-    QString port;
+    quint16 port;
     QString username;
+    bool isUpload;
+    QElapsedTimer *timer;
 };
 #endif // MAINWINDOW_H

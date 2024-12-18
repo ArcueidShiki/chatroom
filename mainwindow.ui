@@ -93,7 +93,7 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>30</y>
+      <y>10</y>
       <width>201</width>
       <height>23</height>
      </rect>
@@ -108,61 +108,13 @@ color: rgb(11, 11, 11);</string>
      <number>24</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_upload">
-    <property name="geometry">
-     <rect>
-      <x>590</x>
-      <y>60</y>
-      <width>49</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color:blue</string>
-    </property>
-    <property name="text">
-     <string>上传</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_accept">
-    <property name="geometry">
-     <rect>
-      <x>650</x>
-      <y>60</y>
-      <width>49</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color:green</string>
-    </property>
-    <property name="text">
-     <string>接受</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_cancel">
-    <property name="geometry">
-     <rect>
-      <x>720</x>
-      <y>60</y>
-      <width>49</width>
-      <height>16</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">color:red;</string>
-    </property>
-    <property name="text">
-     <string>取消</string>
-    </property>
-   </widget>
    <widget class="QTableWidget" name="table_userlist">
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>90</y>
+      <y>150</y>
       <width>201</width>
-      <height>211</height>
+      <height>151</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -196,9 +148,9 @@ color: rgb(11, 11, 11);</string>
     <property name="geometry">
      <rect>
       <x>590</x>
-      <y>10</y>
-      <width>81</width>
-      <height>20</height>
+      <y>70</y>
+      <width>201</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
@@ -372,6 +324,73 @@ color: rgb(11, 11, 11);</string>
      <bool>true</bool>
     </property>
    </widget>
+   <widget class="QLabel" name="label_speed">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>110</y>
+      <width>161</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_upload">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>40</y>
+      <width>41</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(0,0, 0, 0);
+border-radius: 3px;
+color: blue;</string>
+    </property>
+    <property name="text">
+     <string>上传</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_accept">
+    <property name="geometry">
+     <rect>
+      <x>650</x>
+      <y>40</y>
+      <width>41</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(0,0, 0, 0);
+border-radius: 3px;
+color: green;</string>
+    </property>
+    <property name="text">
+     <string>接收</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_cancel">
+    <property name="geometry">
+     <rect>
+      <x>710</x>
+      <y>40</y>
+      <width>41</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">background-color: rgba(0,0, 0, 0);
+border-radius: 3px;
+color: red;</string>
+    </property>
+    <property name="text">
+     <string>取消</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>
@@ -389,6 +408,54 @@ color: rgb(11, 11, 11);</string>
     <hint type="destinationlabel">
      <x>529</x>
      <y>491</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_ip</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btn_connect</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>710</x>
+     <y>381</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>690</x>
+     <y>451</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_port</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btn_connect</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>710</x>
+     <y>411</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>690</x>
+     <y>451</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit_user</sender>
+   <signal>returnPressed()</signal>
+   <receiver>btn_connect</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>710</x>
+     <y>351</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>690</x>
+     <y>451</y>
     </hint>
    </hints>
   </connection>

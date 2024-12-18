@@ -53,7 +53,7 @@ private slots:
     void updateProgressBar(int progress);
     void updateSpeed(QString speed);
 
-    void onTransferComplete();
+    void onTransferComplete(QString filename);
     void onTransferFailed(const QString &errorMsg);
 
     void getUserList();

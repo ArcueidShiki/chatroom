@@ -80,6 +80,7 @@ void FileWorker::upload()
     qint64 bytesSent = 0;
     qint64 bytes = 0;
     qint64 total = file.size();
+    qDebug() << "DEBUG 4";
     QString fileMeta = QString("UPLOAD %1 %2").arg(fileInfo.fileName()).arg(file.size());
     qDebug() << fileMeta;
     socket->write(fileMeta.toUtf8());
@@ -126,7 +127,7 @@ void FileWorker::upload()
     }
     file.close();
     delete socket;
-    emit transferComplete();
+    emit transferComplete(fileInfo.fileName());
 }
 
 void FileWorker::download()

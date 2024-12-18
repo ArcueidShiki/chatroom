@@ -15,7 +15,7 @@ public:
 signals:
     void progressUpdated(int value);
     void speedUpdated(QString speed);
-    void transferComplete();
+    void transferComplete(QString filename);
     void transferFailed(const QString &errorMsg);
 public slots:
     void startTransfer();

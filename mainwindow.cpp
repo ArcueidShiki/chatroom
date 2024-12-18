@@ -70,7 +70,7 @@ void MainWindow::on_btn_connect_clicked()
         connect(sendBtn, &QPushButton::clicked, this, &MainWindow::sendMsg);
         QMessageBox::information(this, "Connected", "Connected to server Success");
         connectBtn->setDisabled(true);
-//        getUserList();
+        getUserList();
     }
     qDebug() << "Connected Success!\n";
     sendBtn->setDisabled(false);
@@ -98,7 +98,36 @@ void MainWindow::sendMsg()
 void MainWindow::receiveMsg()
 {
     QByteArray data = client_sock->readAll();
-    chathistory->append(QString::fromUtf8(data));
+    QString msg = QString::fromUtf8(data);
+    if (msg.startsWith("FILE"))
+    {
+        filenameLb->setText(msg.split(" ")[1]);
+        downloadBtn->setEnabled(true);
+    }
+    else if (msg.startsWith("USERLIST"))
+    {
+        QString ipUserStr = msg.split(" ")[1];
+        QStringList list = ipUserStr.split("\n");
+        qDebug() << ipUserStr;
+        tableList->clear();
+        tableList->setColumnCount(2);
+        tableList->setRowCount(list.size() + 1);
+        tableList->setItem(0,0, new QTableWidgetItem("用户"));
+        tableList->setItem(0,1, new QTableWidgetItem("IP"));
+        for (int i = 0; i < list.size() - 1; i++)
+        {
+            QString ipaddr = list[i].split(":")[0];
+            QString username = list[i].split(":")[1];
+            qDebug() << ipaddr << username;
+            tableList->setItem(i + 1, 0, new QTableWidgetItem(username));
+            tableList->setItem(i + 1, 1, new QTableWidgetItem(ipaddr));
+        }
+    }
+    else
+    {
+        // normal msg
+        chathistory->append(msg);
+    }
 }
 
 void MainWindow::onConnected()
@@ -106,12 +135,16 @@ void MainWindow::onConnected()
     statusBar()->showMessage("连接成功");
     QString greeting = username + u8" 进入了群聊";
     client_sock->write(greeting.toUtf8());
+    // Save Username on Server
+//    QString sendName = "USER " + username;
+//    client_sock->write(sendName.toUtf8());
 }
 
 void MainWindow::onDisconnected()
 {
     statusBar()->showMessage("断开链接");
     chathistory->append("Disconnected from the server.");
+    connectBtn->setEnabled(true);
 }
 
 void MainWindow::onError(QAbstractSocket::SocketError sockErr)
@@ -201,7 +234,7 @@ void MainWindow::updateSpeed(QString speed)
     speedLb->setText(speed);
 }
 
-void MainWindow::onTransferComplete()
+void MainWindow::onTransferComplete(QString filename)
 {
     QMessageBox::information(this, "Transfer Complete", "File transfer completed successful.");
     workerThread->quit();
@@ -221,7 +254,8 @@ void MainWindow::getUserList()
 {
     if (client_sock->state() == QAbstractSocket::ConnectedState)
     {
-        client_sock->write("USERLIST\n");
+        QString request = "USERLIST";
+        client_sock->write(request.toUtf8());
     }
 }
 

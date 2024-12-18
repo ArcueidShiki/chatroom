@@ -1,6 +1,5 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QMainWindow>
 #include <QTcpSocket>
 #include <QTextEdit>
@@ -19,7 +18,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 #include <QThread>
-//#include "fileworker.h"
+#include "fileworker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,7 +31,9 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+signals:
+    void transferFinished();
+    void cancelTransfer();
 private slots:
     void on_lineEdit_ip_textChanged(const QString &arg1);
 
@@ -47,12 +48,13 @@ private slots:
 
     void upload();
     void download();
-    void cancelTransfer();
-//    void updateProgressBar(qint64 bytes, qint64 total);
+    void cancel();
+
+    void updateProgressBar(int progress);
+    void updateSpeed(QString speed);
 
     void onTransferComplete();
     void onTransferFailed(const QString &errorMsg);
-
 
     void getUserList();
 
@@ -64,22 +66,22 @@ private:
     QTcpSocket *file_sock;
     QTextEdit *chathistory;
     QLineEdit *input;
-    QLineEdit *ipedit;
-    QLineEdit *useredit;
-    QLineEdit *portedit;
+    QLineEdit *ipEdit;
+    QLineEdit *userEdit;
+    QLineEdit *portEdit;
     QPushButton *connectBtn;
     QPushButton *sendBtn;
     QPushButton *closeBtn;
-    QPushButton *acceptFile;
-    QPushButton *uploadFile;
-    QPushButton *cancelFile;
-    QLabel *filename;
+    QPushButton *downloadBtn;
+    QPushButton *uploadBtn;
+    QPushButton *cancelBtn;
+    QLabel *filenameLb;
     QLabel *speedLb;
     QProgressBar *progressBar;
     QTableWidget *tableList;
     QFile *file = nullptr;
     QThread *workerThread;
-//    FileWorker *fileWorker;
+    FileWorker *fileworker;
     QString ip;
     quint16 port;
     QString username;

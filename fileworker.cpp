@@ -179,10 +179,22 @@ void FileWorker::download()
     while(bytesReceived < filesize && socket->state() == QAbstractSocket::ConnectedState)
     {
 
-        QByteArray chunk = socket->read(1024 * 4096 * 200);
+        QByteArray chunk = socket->read(4096);
         socket->waitForReadyRead(100000);
-        file->write(chunk);
-        bytesReceived += chunk.size();
+        qint64 bytesToWrite = chunk.size();
+        qint64 bytesWritten = 0;
+        if (bytesToWrite + bytesReceived > filesize)
+        {
+            bytesToWrite = filesize - bytesReceived;
+        }
+
+        while (bytesToWrite > 0)
+        {
+            bytesWritten += file->write(chunk, bytesToWrite);
+            bytesToWrite -= bytesWritten;
+            bytesReceived += bytesWritten;
+        }
+
         double seconds = timer->elapsed() / 1000;
         QString speed;
         speedStr(bytesReceived, seconds, speed);
@@ -190,6 +202,7 @@ void FileWorker::download()
         emit speedUpdated(speed);
         emit progressUpdated(progress);
     }
+    qDebug() << "Bytes received: " << bytesReceived << "Filesize: " << filesize;
     socket->close();
     file->close();
     emit transferComplete();
